@@ -1,0 +1,58 @@
+http-server angularjs
+
+ ng-app="MyApp"
+  <body ng-controller="MyAppController">
+   <h1>{{todo.user}}'s To Do List</h1>
+    <tr ng-repeat="item in todo.items">
+     <td><input type="checkbox" ng-model="item.done"/> </td>
+    ng-hide="incompleteCount() == 0" 
+     $scope access is there only in the javascript portion. For HTML. use {{}} or ng-model. 
+     For everything that you refer from scope, there has to be a ng-* attribute for it for binding to work. This is for everything that is in HTML tags
+     The exception is simply printing the values from {{}}
+     ng-class={{warningLevel()}}
+     Below is example for creating a new Model Item and referring it elsewhere.
+      <input class="form-control" ng-model="actionText" />
+            <span class="input-group-btn">
+                <button class="btn btn-default"
+                        ng-click="addNewItem(actionText)">Add</button>
+            </span>
+     
+      $scope.addItem=function(addedItem){
+                 $scope.todo.items.push({action:addedItem, done:false});
+             }
+             
+              filter:{done: false} | orderBy:'action'
+              
+              Custom Filters would be deinfed in the same level as the controller. 
+              They have to return a function that does the actual filtering
+              
+              
+              
+              FIlters >>>>>>>>>>>>>>>>>>>>>>>>>
+        MyApp.filter("CustomFilter",function(){
+            return function(items, showComplete){
+                var resultArr=[];
+                angular.forEach(items, function(item){
+                    if(item.done==false || showComplete==true){
+                    resultArr.push(item);
+                }                
+                });
+                return resultArr;
+            }
+        });
+              
+               <tr  ng-repeat="item in todo.items | CustomFilter:showComplete | orderBy:'action'">
+            Filter has to created in the same way as a module is created
+               >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+              
+     >>>>>>>>>>>>>>> Dynamic Model Properties >>>>>>>>>>>>>>>>>>>>>>
+     This is the same ng-model directive that I used when I set up the check boxes, and you’ll encounter this directive a lot when working with form elements. The point to note is that I have specified the name of a property for the directive to update that is not part of the model. The ng-model directive will dynamically create the property for me within the scope of the controller, effectively creating dynamic model properties that are used to handle user input. I use the dynamic property in the second directive I added to the example:
+
+...
+<button class="btn btn-default" ng-click="addNewItem(actionText)">Add</button>
+     
+     Utility methods 
+               angular.forEach($scope.todo.items, function (item) {
+                    if (!item.done) { count++ }
+                });
+                

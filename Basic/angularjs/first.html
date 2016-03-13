@@ -1,0 +1,101 @@
+<html lang="en" ng-app="MyApp" class="no-js">
+    <head>
+        <base href="/">
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="">
+        <meta name="robots" content="">
+        <link rel="shortcut icon" href="">
+        <link href="bootstrap.css" rel="stylesheet" />
+        <link href="bootstrap-theme.css" rel="stylesheet" />
+        <script src="angular.js"></script>
+    <script>
+        var model = {
+            user: "Ashish"
+        };
+        
+        var MyApp=angular.module("MyApp", []);
+        MyApp.run(function($http){
+           $http.get("todo.json").success(function(data){
+              model.items=data;
+                console.log(data);
+           }); 
+        });
+        
+        MyApp.controller("MyAppController", function($scope){
+            $scope.todo=model;
+            
+            $scope.incompleteCount=function(){
+                var count=0;
+                angular.forEach($scope.todo.items, function(item){
+                   if(!item.done){
+                       count++;
+                   }; 
+                });
+                return count;
+            }
+            
+             $scope.warningLevel=function(){
+            return $scope.incompleteCount() < 3 ?"label-success":"label-warning";
+        }
+             $scope.addItem=function(addedItem){
+                 $scope.todo.items.push({action:addedItem, done:false});
+             }
+            
+        });
+        MyApp.filter("CustomFilter",function(){
+            return function(items, showComplete){
+                var resultArr=[];
+                angular.forEach(items, function(item){
+                    if(item.done==false || showComplete==true){
+                    resultArr.push(item);
+                }                
+                });
+                return resultArr;
+            }
+        });
+        
+        
+
+       
+        
+    </script>
+    </head>
+    
+    <body ng-controller="MyAppController">
+    <div class="page-header">
+        <h1>{{todo.user}}'s To Do List</h1>
+               <span class="label label-default" ng-hide="incompleteCount() == 0" ng-class="warningLevel()">
+                {{incompleteCount()}}
+            </span>
+    </div>
+    <div class="panel">
+        <div class="input-group">
+            <input class="form-control" ng-model="addedItem"/>
+            <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="addItem(addedItem)">Add</button>
+            </span>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Done</th>
+                </tr>
+            </thead>
+            <tbody>
+               <tr  ng-repeat="item in todo.items | CustomFilter:showComplete | orderBy:'action'">
+                   <td>{{item.action}}</td>
+                   <td><input type="checkbox" ng-model="item.done"/> </td>
+                   <td>{{item.done}}</td>
+               </tr>
+            </tbody>
+        </table>
+                
+ <div class="checkbox-inline">
+        <label><input type="checkbox" ng-model="showComplete"> Show Complete</label>
+    </div>
+    </div>
+</body>
+</html>
