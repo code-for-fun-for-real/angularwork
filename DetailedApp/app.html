@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html ng-app="sportsStore">
+<head>
+    <title>SportsStore</title>
+    <script src="angularjs/angular.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script>
+        var sportsStore=angular.module("sportsStore", ["customFilter"]);
+        var model={title:"SPORTS STORE"};
+        
+        // This function is run at the time of load
+        // this is function chaining while declaration and of course it wil be while running.
+        
+        sportsStore.run(function($http){
+            $http.get("http://localhost:5000/products").success(function(data){
+                model.products=data;
+            });
+            
+        });
+        
+        sportsStore.controller("SportsController", function($scope){
+            $scope.sportsData=model;
+            $scope.getCategories=function(){            
+            }
+        });
+        
+        sportsStore
+            .constant("productListActiveClass", "btn-primary")
+            .constant("productListPageCount", 3)
+            .controller("productListCtrl", function($scope, $filter, productListActiveClass ){
+            var selectedCategory = null;
+            
+            $scope.selectedPage = 1;
+            $scope.pageSize = productListPageCount;
+            
+            $scope.selectCategory = function (newCategory) {
+                selectedCategory = newCategory;
+                $scope.selectedPage = 1;
+            }
+            
+            
+             $scope.selectPage = function (newPage) {
+                 $scope.selectedPage = newPage;
+            }
+            
+            $scope.categoryFilterFn = function (product) {
+                // this will return true or false and based on that, the filtering would work.
+                return selectedCategory == null ||
+                    product.category == selectedCategory;
+                
+            }
+            
+            $scope.getCategoryClass = function (category) {
+            return selectedCategory == category ? productListActiveClass : "";
+            }
+            
+            $scope.getPageClass = function (page) {
+            return $scope.selectedPage == page ? productListActiveClass : "";
+            }
+            
+        });
+        
+        
+    // So this filter takes in the entire list BUT 
+    //returns only the Uniuque category names.
+    // So this has to be handled separately in the place where the filter has been applied.
+    // In this case, the data is apssed automatically to the filter and only the propertyName is specified a the location where the filter is being used.
+        angular.module("customFilter", [])
+            .filter("unique", function(){
+            return function(data, propertyName){
+                
+                if(angular.isArray(data) && angular.isString(propertyName)){
+                    
+                    var results=[];
+                    var keys={};
+                    
+                    for(var i=0; i<data.length;i++){
+                        var val=data[i][propertyName];
+                        
+                        if(angular.isUndefined(keys[val])){
+                            keys[val]=true;
+                            results.push(val);
+                        
+                        }
+                    }
+                    return results;
+                    
+                }else{
+                    return data;
+                }
+            }
+        });
+    
+    </script>
+</head>
+    
+<body ng-controller="SportsController">
+    <div class="navbar navbar-inverse">
+        <a class="navbar-brand" href="#">{{sportsData.title}}</a>
+    </div>
+    <div class="panel panel-default row" ng-controller="productListCtrl">
+        <div class="col-xs-3">
+            <a ng-click="selectCategory()" class="btn btn-block btn-default btn-lg">Home</a>
+            <a ng-class="getCategoryClass(product)"  ng-click="selectCategory(product)" ng-repeat="product in sportsData.products | unique:'category'" class=" btn btn-block btn-default btn-lg" >
+                {{product}} 
+            </a>
+        </div>
+        <div class="col-xs-8">
+            <!-- There are 2 ways of applying filter. One is the way shown below and the other is the regular way of specifying the filter directly and passing the parameter.-->
+            <div class="well" ng-repeat="product in sportsData.products | filter:categoryFilterFn">
+                <strong>{{product.name}}</strong>
+                <span class="pull-right label label-primary">{{product.price | currency}}</span>
+                <span class="lead">{{product.description}}</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

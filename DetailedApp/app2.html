@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html ng-app="sportsApp2">
+<head>
+    <title>SportsStore</title>
+<script src="angularjs/angular.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    
+    <script>
+    var sportsApp=angular.module("sportsApp2", []);
+    var model={
+    name:"My Store Changed"
+    };
+        // This is handler chaining.
+        // run takes a function with the arguments.
+        // Success takes function with data as argument.
+    sportsApp.run(function($http){
+            $http.get("http://localhost:5000/products").success(function(data){
+            model.products=data;
+            })
+        });
+        sportsApp.controller("mainController", function($scope){
+            $scope.model=model;
+        });
+        
+        sportsApp.filter("uniq", function(){
+            return function(data,propertyName){
+                 if(angular.isArray(data) && angular.isString(propertyName)){
+                    var categoryNames={};
+                    var retVal=[];
+
+                    for(var i=0; i< data.length; i++){
+                        var val=data[i][propertyName];
+                        if(angular.isUndefined(categoryNames[val])){
+                           categoryNames[val]=true;
+                           retVal.push(val);
+                           }
+                        }
+                        return retVal;
+                    }else{
+                        return data;
+                    }
+            }
+            
+        });
+    </script>
+    
+    
+</head>
+<body ng-controller="mainController">
+    <div class="navbar navbar-inverse">
+        <a class="navbar-brand" href="#">{{model.name}}</a>
+    </div>
+    <div class="panel panel-default row">
+        <div class="col-xs-3">
+             <div class="well" ng-repeat="category in model.products | uniq:'category'">{{category}}</div>
+        </div>
+        <div class="col-xs-8">
+            <div class="well" ng-repeat="product in model.products | filter:priceFilter">
+                <strong>{{product.name}}</strong>
+                <strong>{{product.description}}</strong>
+                <strong>{{product.price}}</strong>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
