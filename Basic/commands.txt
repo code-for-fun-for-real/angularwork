@@ -1,0 +1,299 @@
+http-server angularjs
+
+ ng-app="MyApp"
+  <body ng-controller="MyAppController">
+   <h1>{{todo.user}}'s To Do List</h1>
+    <tr ng-repeat="item in todo.items">
+     <td><input type="checkbox" ng-model="item.done"/> </td>
+    ng-hide="incompleteCount() == 0" 
+     $scope access is there only in the javascript portion. For HTML. use {{}} or ng-model. 
+     For everything that you refer from scope, there has to be a ng-* attribute for it for binding to work. This is for everything that is in HTML tags
+     The exception is simply printing the values from {{}}
+     ng-class={{warningLevel()}}
+     Below is example for creating a new Model Item and referring it elsewhere.
+      <input class="form-control" ng-model="actionText" />
+            <span class="input-group-btn">
+                <button class="btn btn-default"
+                        ng-click="addNewItem(actionText)">Add</button>
+            </span>
+     
+      $scope.addItem=function(addedItem){
+                 $scope.todo.items.push({action:addedItem, done:false});
+             }
+             
+              filter:{done: false} | orderBy:'action'
+              
+              Custom Filters would be deinfed in the same level as the controller. 
+              They have to return a function that does the actual filtering
+              
+              
+              
+              FIlters >>>>>>>>>>>>>>>>>>>>>>>>>
+        MyApp.filter("CustomFilter",function(){
+            return function(items, showComplete){
+                var resultArr=[];
+                angular.forEach(items, function(item){
+                    if(item.done==false || showComplete==true){
+                    resultArr.push(item);
+                }                
+                });
+                return resultArr;
+            }
+        });
+              
+               <tr  ng-repeat="item in todo.items | CustomFilter:showComplete | orderBy:'action'">
+            Filter has to created in the same way as a module is created. there is no assignment over there
+            
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> USING AJAX
+    Use the $http which is the in-built function to access JSON documents.
+    MyApp.run(function($http){
+           $http.get("todo.json").success(function(data){
+              model.items=data;
+                console.log(data);
+           }); 
+        });
+        
+    
+    
+              
+     >>>>>>>>>>>>>>> Dynamic Model Properties >>>>>>>>>>>>>>>>>>>>>>
+     Essentially adding properties to the model dynamically.
+    
+    This is the same ng-model directive that I used when I set up the check boxes, and you’ll encounter this directive a lot when working with form elements. The point to note is that I have specified the name of a property for the directive to update that is not part of the model. The ng-model directive will dynamically create the property for me within the scope of the controller, effectively creating dynamic model properties that are used to handle user input. I use the dynamic property in the second directive I added to the example:
+
+...
+<button class="btn btn-default" ng-click="addNewItem(actionText)">Add</button>
+     
+     Utility methods 
+               angular.forEach($scope.todo.items, function (item) {
+                    if (!item.done) { count++ }
+                });
+                
+                
+    Angular general
+    AngularJS has a lot of work to do each time an HTML document to which AngularJS has been applied is loaded—the HTML elements have to be compiled, the data bindings have to be evaluated, directives need to be executed, and so on, building support for the features.
+    
+    A lot of current web development is still for round-trip applications, not least because they require little from the browser, which ensures the widest possible client support. But there are some serious drawbacks to round-trip applications: They make the user wait while the next HTML document is requested and loaded, they require a large server-side infrastructure to process all of the requests and manage all of the application state, and they require a lot of bandwidth because each HTML document has to be self-contained (leading to a lot of the same content being included in each response from the server).
+
+Single-page applications take a different approach. An initial HTML document is sent to the browser, but user interactions lead to Ajax requests for small fragments of HTML or data inserted into the existing set of elements being displayed to the user. The initial HTML document is never reloaded or replaced, and the user can continue to interact with the existing HTML while the Ajax requests are being performed asynchronously, even if that just means seeing a “data loading” message.
+
+use jQuery for low-complexity web apps where unit testing isn’t critical and you require immediate results. jQuery is also ideal for enhancing the HTML that is generated by round-trip web apps (where user interactions cause a new HTML document to be loaded) because you can easily apply jQuery without needing to modify the HTML content generated by the server. Use AngularJS for more complex single-page web apps, when you have time for careful design and planning and when you can easily control the HTML generated by the server.
+
+The client-side implementation of the MVC pattern gets its data from server-side components, usually via a RESTful web service, which I describe in Chapter 5. The goal of the controller and the view is to operate on the data in the model in order to perform DOM manipulation so as to create and manage HTML elements that the user can interact with. Those interactions are fed back to the controller, closing the loop to form an interactive application.
+
+Models—the M in MVC—contain the data that users work with. There are two broad types of model: view models, which represent just data passed from the controller to the view, and domain models, which contain the data in a business domain, along with the operations, transformations, and rules for creating, storing, and manipulating that data, collectively referred to as the model logic.
+
+
+The model in an application built using the MVC pattern should
+
+    Contain the domain data
+    Contain the logic for creating, managing, and modifying the domain data (even if that means executing remote logic via web services)
+    Provide a clean API that exposes the model data and operations on it
+
+The model should not
+
+    Expose details of how the model data is obtained or managed (in other words, details of the data storage mechanism or the remote web service should not be exposed to controllers and views)
+    Contain logic that transforms the model based on user interaction (because this is the controller’s job)
+    Contain logic for displaying data to the user (this is the view’s job)
+
+A controller built using the MVC should
+
+    Contain the logic required to initialize the scope
+    Contain the logic/behaviors required by the view to present data from the scope
+    Contain the logic/behaviors required to update the scope based on user interaction
+
+The controller should not
+
+    Contain logic that manipulates the DOM (that is the job of the view)
+    Contain logic that manages the persistence of data (that is the job of the model)
+    Manipulate data outside of the scope
+
+The domain model isn’t the only data in an AngularJS application. Controllers can create view data (also known as view model data or view models) to simplify the definition of views. View data is not persistent and is created either by synthesizing some aspect of the domain model data or in response to user interaction. You saw an example of view data in Chapter 2, when I used the ng-model directive to capture the text entered by the user in an input element. View data is usually created and accessed via the controller’s scope,
+
+
+Views should
+
+    Contain the logic and markup required to present data to the user
+
+Views should not
+
+    Contain complex logic (this is better placed in a controller)
+    Contain logic that creates, stores, or manipulates the domain model
+
+Views can contain logic, but it should be simple and used sparingly. Putting anything but the simplest method calls or expressions in a view makes the overall application harder to test and maintain.
+
+HTTP verbs
+PUT and DELETE are indempotent
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BOOTSTRAP >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Buttons, Forms, Tables
+
+
+Modifying Style Context
+
+Bootstrap defines a set of style context classes that are applied to elements to signify their purpose. These classes are specified with the name created by combining a basic Bootstrap style class (such as btn), a hyphen, and one of primary, success, warning, info, or danger. Here is an example of applying a style context class:
+
+...
+<button class="btn btn-primary">Primary</button>
+
+Modifying Sizes
+
+You can change the way that some elements are styled by using a size modification class. These are specified by combining a basic class name, a hyphen, and lg or sm. Here is an example from the listing of a size class:
+
+...
+<button class="btn btn-lgbtn-success">Large Success</button>
+
+
+Using Bootstrap to Style Tables
+
+Bootstrap also includes support for styling table elements—a feature I used for the example app in Chapter 2. Table 4-4 lists the CSS classes that Bootstrap includes for tables.
+
+Table 4-4. The Bootstrap CSS Classes for Tables
+
+Bootstrap Class
+	
+
+Description
+
+table
+	
+
+Applies general styling to table elements and their contents
+
+table-striped
+	
+
+Applies alternate-row striping to the rows in the table body
+
+table-bordered
+	
+
+Applies borders to all rows and columns
+
+table-hover
+	
+
+Displays a different style when the mouse hovers over a row in the table
+
+table-condensed
+	
+
+Reduces the spacing in the table to create a more compact layout
+
+The basic styling for forms is achieved by applying the form-group class to a div element that contains a label and an input element, as follow:
+
+...
+<div class="form-group">
+    <label>Email:</label>
+    <input name="email" class="form-control" />
+</div>
+...
+
+Bootstrap styles the elements so that the label is shown above the input element and the input element occupies 100 percent of the available horizontal space.
+
+There are different classes for other form elements. In the example, I have used the checkbox class, which is also applied to div elements, for input elements whose type is set to, obviously enough, checkbox, as follows:
+
+...
+<div class="checkbox">
+    <label>
+        <input type="checkbox" />
+        I agree to the terms and conditions.
+    </label>
+</div>
+
+Using Bootstrap to Create Grids
+
+Bootstrap provides style classes that can be used to create different kinds of grid layout, ranging from one to twelve columns and with support for responsive layouts (where the layout of the grid changes based on the width of the screen, allowing the same content to be laid out on mobile and desktop devices). In Listing 4-9, I have used the bootstrap.html file to create a grid layout.
+
+col-sm-*
+Grid cells are displayed horizontally when the screen width is greater than 768 pixels.
+
+col-md-*
+Grid cells are displayed horizontally when the screen width is greater than 940 pixels.
+
+col-lg-*
+Grid cells are displayed horizontally when the screen width is greater than 1170 pixels.
+                
+>>>>>>>>>>>>>> working with Arrays in javascript >>>>>>>>>>>>>
+angular.forEach(myArray, function (value, key) {
+            console.log(key + ": " + value);
+        });
+        
+Array methods
+
+concat(otherArray)
+	
+
+Concatenates the contents of the array with the array specified by the argument. Multiple arrays can be specified.
+	
+
+Array
+
+join(separator)
+	
+
+Joins all of the elements in the array to form a string. The argument specifies the character used to delimit the items.
+	
+
+string
+
+pop()
+	
+
+Treats an array like a stack and removes and returns the last item in the array.
+	
+
+object
+
+push(item)
+	
+
+Treats an array like a stack and appends the specified item to the array.
+	
+
+void
+
+reverse()
+	
+
+Reverses the order of the items in the array.
+	
+
+Array
+
+shift()
+	
+
+Like pop, but operates on the first element in the array.
+	
+
+object
+
+slice(start,end)
+	
+
+Returns a section of the array.
+	
+
+Array
+
+sort()
+	
+
+Sorts the items in the array.
+	
+
+Array
+
+splice(index, count)
+	
+
+Removes count items from the array, starting at the specified index.
+	
+
+Array
+
+unshift(item)
+	
+
+Like push, but inserts the new element at the start of the array.
+                
