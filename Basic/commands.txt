@@ -296,4 +296,34 @@ unshift(item)
 	
 
 Like push, but inserts the new element at the start of the array.
+
+
+For passing items into the controller, they have to be passed into the function itself. If not passsed into the function, they would not be available within the controller.
+
+
+var myModule=angular.module('SomeModuleName', []); -- This means create a new module
+var myModule=angular.module('SomeModuleName'); -- Means locate an existing module.
+
+This is an interesting filter, for selecting uniques. The idea is to use the keys variable to hold which values have already been loaded.
+
+angular.module("customFilters", [])
+    .filter("unique", function () {
+        return function (data, propertyName) {
+            if (angular.isArray(data) && angular.isString(propertyName)) {
+                var results = [];
+                var keys = {};  --> This is thr interesting part
+                for (var i = 0; i < data.length; i++) {
+                    var val = data[i][propertyName];
+                    if (angular.isUndefined(keys[val])) { -> and this 
+                        keys[val] = true; --> and this.
+                        results.push(val);
+                    }
+                }
+                return results;
+            } else {
+                return data;
+            }
+        }
+    });
+
                 

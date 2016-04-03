@@ -16,7 +16,7 @@
         // run takes a function with the arguments.
         // Success takes function with data as argument.
     sportsApp.run(function($http){
-            $http.get("http://localhost:5000/products").success(function(data){
+            $http.get("http://localhost:2403/products").success(function(data){
             model.products=data;
             })
         });
