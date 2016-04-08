@@ -1,5 +1,19 @@
 http-server angularjs
 
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+TOOLKIT
+Controller, 
+$scope, 
+$scope and data in scope
+$scope and functions in scope
+inbuilt filter function
+User defined filters
+$filter
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  ng-app="MyApp"
   <body ng-controller="MyAppController">
    <h1>{{todo.user}}'s To Do List</h1>
@@ -326,4 +340,9 @@ angular.module("customFilters", [])
         }
     });
 
-                
+Using Angular's in-build function
+
+<div class="well" ng-repeat="item in data.products | filter:categoryFilterFn">
+...
+One of the built-in filters that AngularJS provides is called, confusingly, filter. It processes a collection and selects a subset of the objects it contains. I describe filters in Chapter 14, but the technique I am using here is to specify the name of the function defined by the productListCtrl controller. By applying the filter to the ng-repeat directive that creates the product details, I ensure that only the products in the currently selected category are displayed,
+Any behavior that needs to be imparted on the UI can be done via the Angular mechanism of defining the behavior in the controller and passing the relevant data to it. For example in the case of highlighting the selected category, the idea is to handle it via a ng-click action. When a ng-click action happens, the value in the scope that refers to the selected category changes, and then anything that is tied to that selected category is executed.
