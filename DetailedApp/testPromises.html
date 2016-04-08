@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  
+  <script type="text/javascript">
+    var myApp=angular.module('myApp',[]);
+    myApp.controller('myController',function($scope, $http){
+      var promise=$http.get("http://localhost:2403");
+      promise.success(function(data){
+        $scope.todos=data;
+      });
+    });
+     
+  </script>
+  
+</head>
+<body ng-controller='myController'>
+<div class='panel'>
+   <h1>Content</h1>
+    {{todos}}
+  </div>
+</body>
+</html>

@@ -312,6 +312,10 @@ unshift(item)
 Like push, but inserts the new element at the start of the array.
 
 
+Converting a Number to String toString
+Converting String to Number Number();
+>>>>>>>>>>>>>>>>>
+
 For passing items into the controller, they have to be passed into the function itself. If not passsed into the function, they would not be available within the controller.
 
 
