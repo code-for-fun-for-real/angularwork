@@ -10,8 +10,54 @@ $scope and functions in scope
 inbuilt filter function
 User defined filters
 $filter
+<ng-include src="'views/productList.html'"></ng-include>  --> Use this to include fragments in the HTML.
 
 
+Module --> provides services which can be of type Factory, ...
+Module has filters, controllers, directives, config, service, value,
+
+config uses Route Providers for routing to pages and rules for routing. The routig is done using the #tag. The page remains the same and the value for #<pageName> gets appended. Using when and otherwise.
+$resource is a wrapper around $http and is used to access a URL. The $resource has a $httpprovider that comes with some default values. These can be overwritten in certain cases.
+
+In-built functions -->$http, filter angular helper functions.
+
+The key thing about handling data in javascript is that there is only one data structure which is an array. So all the data manipulation has to happen within an array. An array can take another array, that is the flexibility that is there.
+
+Useful Pattern for Angular usages
+1) Define a value in the model and display the error messages based on the value of the  variable. And this can be done using bootstrap. Using hr ng-show command to show or not show based on the model.
+Something like this 
+<div class="alert alert-warning" ng-show="cartData.length == 0">
+        There are no products in your shopping cart.
+        <a href="#/products" class="alert-link">Click here to return to the catalogue</a>
+    </div>
+
+2) Use the controller methods as a wrap around to the actual functionalities provided by the individual compoenents. The controller acts like a wrap around for the methods that are provided by the external modules.
+
+
+
+In-built directives :
+ng-model
+{{}}
+ng-show, ng-hide
+ng-if
+ng-class, ng-style
+ng-click
+ng-blur, 
+ng-change
+
+
+
+$scope is tied to a controller, so if the same controller is defined twice there would be 2 seperate scopes for each of the instances and they would not share any data between themselves.
+
+To communicate between scopes, the $rootscope is available that can broadcast an event when it happens and then send it across to all the child modules. All scopes are implicitly inheriting from parent scope.
+
+The controllers can be scopeless in the case they are not needed to use the scope variables.
+
+Filters are based on providing a function that returns a worker function.
+
+Angular comes with jqLite - a scaled down version of jQuery for basic functions. This can be replaced by full feature jquery if it is loaded before angular.
+
+The AngularJS Module defines three methods for defining services: factory, service, and provider. The result of using these methods is the same—a service object that provides functionality that can be used throughout the AngularJS application—but the way that the service object is created and managed by each method is slightly different,
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  ng-app="MyApp"
@@ -314,6 +360,9 @@ Like push, but inserts the new element at the start of the array.
 
 Converting a Number to String toString
 Converting String to Number Number();
+
+
+
 >>>>>>>>>>>>>>>>>
 
 For passing items into the controller, they have to be passed into the function itself. If not passsed into the function, they would not be available within the controller.
@@ -350,3 +399,59 @@ Using Angular's in-build function
 ...
 One of the built-in filters that AngularJS provides is called, confusingly, filter. It processes a collection and selects a subset of the objects it contains. I describe filters in Chapter 14, but the technique I am using here is to specify the name of the function defined by the productListCtrl controller. By applying the filter to the ng-repeat directive that creates the product details, I ensure that only the products in the currently selected category are displayed,
 Any behavior that needs to be imparted on the UI can be done via the Angular mechanism of defining the behavior in the controller and passing the relevant data to it. For example in the case of highlighting the selected category, the idea is to handle it via a ng-click action. When a ng-click action happens, the value in the scope that refers to the selected category changes, and then anything that is tied to that selected category is executed.
+
+Using the $http.get to hit a URL and get the values and use it with the promise mechanism 
+angular.module("sportsStore")
+    .constant("dataUrl", "http://localhost:5500/products")
+    .controller("sportsStoreCtrl", function ($scope, $http, dataUrl) {
+ 
+        $scope.data = {};
+ 
+        $http.get(dataUrl)
+            .success(function (data) {
+                $scope.data.products = data;
+            })
+            .error(function (error) {
+                $scope.data.error = error;
+            });
+    });
+	
+
+Usage of state into the UI logic
+The key thing is that the UI logic is driven by the values in the model. If there is something to be changed in the UI, it has to be driven off the values in the model.
+ 	
+	<div class="alert alert-danger" ng-show="data.error">
+        Error ({{data.error.status}}). The product data was not loaded.
+        <a href="/app2.html" class="alert-link">Click here to try again</a>
+    </div>
+
+
+
+>>>>>> Working the examples >>>>>>>>
+
+dpd –p 5500 app.dpd
+dashboard
+API becomes available here --> http://localhost:2403/products
+
+Providers ::   $stateProvider, $urlRouterProvider, $httpProvider
+
+
+Using Directives
+What this shows is that create a factory object called cart whose defnitiion is the function object immediately preceeding it. This is the way of defining the factory objects that is followed across multiple scenarios in Angular.
+angular.module("cart", []).
+factory("cart", function()){
+
+2way binding vs onewayy binding
+Making the binding like this is 2 way = ng.model.propertyName
+This is 2 way because the model changes are reflected in UI and vice versa. However this is one way binding
+{{}} because only the Model changes are reflected in the UI.
+
+
+Form Validations>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Give a name to a form and use novalidate option to make sure HTML does not validate the form.
+For validation, there are inbuilt classes that are assigned to the form elements.
+
+In most web applications, the user shouldn’t be able to move to the next step in a process until all the form data has been provided and is valid. To that end, I want to disable the Complete order button when the form is invalid and automatically enable it when the user has completed the form properly.
+To do this, I can take advantage of the validation information that AngularJS adds to the scope. In addition to the per-field information that I used in the previous section to display per-element messages, I can get information about the overall state of the form as well. The shippingForm.$invalid property will be set to true when one or more of the input elements is invalid, and I can combine this with the ng-disabled directive to manage the state of the button element. I describe the ng-disabled directive in Chapter 11, but it adds and removes the disabled attribute from the element it has been applied to based on the scope property or expression it is configured with.
+
+On click of button, use ng-click to handle the click event.
